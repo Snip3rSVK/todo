@@ -1,6 +1,8 @@
 <template>
   <v-app>
-    <v-main>
+    <app-nav></app-nav>
+    <app-bar></app-bar>
+    <v-main style="margin-top: 1px">
       <router-view />
     </v-main>
   </v-app>
@@ -11,15 +13,16 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "App",
-
-  data() {
-    return {
-      //
-    };
-  },
 });
 </script>
 
-<style>
-@import "@/assets/base.css";
-</style>
+<script setup lang="ts">
+import { useStore } from "@/store";
+import AppBar from "@/components/AppBar.vue";
+import AppNav from "@/components/AppNav.vue";
+
+const store = useStore();
+store.dispatch("getLists");
+</script>
+
+<style></style>

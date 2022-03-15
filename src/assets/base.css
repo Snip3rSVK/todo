@@ -1,1 +1,11 @@
+.v-app-bar {
+    transition-property: height, tranform, margin;
+}
 
+.v-app-bar-title {
+    overflow: hidden;
+}
+
+.v-input--density-comfortable {
+    --v-input-control-height: 36px
+}
