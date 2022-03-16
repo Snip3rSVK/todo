@@ -3,9 +3,8 @@
     <div class="list-item-overlay"></div>
 
     <div class="list-item-checkbox pr-2">
-      <!-- TODO v-model -->
       <v-checkbox
-        v-model="props.active"
+        v-model="active"
         color="primary"
         false-icon="mdi-checkbox-blank-circle-outline"
         true-icon="mdi-check"
@@ -16,20 +15,25 @@
     </div>
 
     <div class="flex-grow-1 pt-1 text-truncate">
-      <div class="list-item-title text-truncate">{{ props.title }}</div>
+      <div
+        class="list-item-title text-truncate"
+        :class="{ 'text-decoration-line-through': props.item.active }"
+      >
+        {{ props.item.title }}
+      </div>
       <pre
-        v-if="props.description"
+        v-if="props.item.description"
         class="list-item-subtitle text-caption text-medium-emphasis"
       >
-        {{ props.description }}
+        {{ props.item.description }}
       </pre>
       <v-chip
-        v-if="props.date"
+        v-if="props.item.date"
         size="small"
         variant="outlined"
         class="border pt-2 pb-2 pl-3 pr-3 mt-1"
       >
-        {{ date.toLocaleDateString("en-US") }}
+        {{ formattedDate }}
       </v-chip>
     </div>
 
@@ -45,21 +49,35 @@
 </template>
 
 <script setup lang="ts">
+import { useStore } from "@/store";
+import type { ItemApi } from "@/types";
 import { computed } from "vue";
 
-// TODO maybe get interface from api and tranform to optional?
-interface Item {
-  id?: number;
-  // listId: number;
-  active: boolean;
-  title: string;
-  description?: string;
-  date?: string;
+// The ItemApi interface could be used instead, but it doesnt work in definedProps in the current vue version
+interface Props {
+  item: ItemApi;
 }
 
-const props = defineProps<Item>();
+const props = defineProps<Props>();
+const store = useStore();
 
-const date = computed(() => new Date(props.date || ""));
+const active = computed({
+  get: () => props.item.active,
+  set: (active: boolean) =>
+    store.dispatch("list/updateItemStatus", { item: props.item, active }),
+});
+const formattedDate = computed(() => {
+  const date = new Date(props.item.date || "");
+
+  // TODO maybe put this in util
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
+});
 </script>
 
 <style scoped>

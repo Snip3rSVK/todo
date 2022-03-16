@@ -1,6 +1,18 @@
+import type { DefineComponent } from "vue";
+
+interface Modal extends ModalSetup {
+  opened: boolean;
+}
+
+export interface ModalSetup {
+  component: DefineComponent | null;
+  componentProps?: object | null;
+}
+
 export interface RootState {
   lists: ListApi[];
   navOpened: boolean;
+  modal: Modal;
 }
 
 export interface ListApi {

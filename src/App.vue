@@ -2,9 +2,12 @@
   <v-app>
     <app-nav></app-nav>
     <app-bar></app-bar>
-    <v-main style="margin-top: 1px">
+
+    <v-main class="main">
       <router-view />
     </v-main>
+
+    <app-modal></app-modal>
   </v-app>
 </template>
 
@@ -20,9 +23,14 @@ export default defineComponent({
 import { useStore } from "@/store";
 import AppBar from "@/components/AppBar.vue";
 import AppNav from "@/components/AppNav.vue";
+import AppModal from "@/components/AppModal.vue";
 
 const store = useStore();
 store.dispatch("getLists");
 </script>
 
-<style></style>
+<style>
+.main {
+  margin-top: 1px;
+}
+</style>

@@ -1,5 +1,5 @@
 import ApiService from "@/api/ApiService";
-import type { RootState, ListApi } from "@/types";
+import type { RootState, ListApi, ModalSetup, ListDetailApi } from "@/types";
 import type { InjectionKey } from "vue";
 import { createStore, useStore as baseUseStore, Store } from "vuex";
 import listModule from "./modules/list";
@@ -10,6 +10,11 @@ export const store = createStore<RootState>({
   state: {
     lists: [],
     navOpened: true,
+    modal: {
+      opened: false,
+      component: null,
+      componentProps: null,
+    },
   },
   mutations: {
     // TODO constants
@@ -18,14 +23,26 @@ export const store = createStore<RootState>({
       state.lists = lists;
     },
 
+    ADD_LIST(state: RootState, list: ListDetailApi) {
+      state.lists.push(list);
+    },
+
     TOGGLE_NAV(state: RootState) {
       state.navOpened = !state.navOpened;
-      console.log("STATE TOGGLE", state.navOpened);
     },
 
     SET_NAV(state: RootState, opened: boolean) {
       state.navOpened = opened;
-      console.log("STATE SET", state.navOpened);
+    },
+
+    OPEN_MODAL(state: RootState, setup: ModalSetup) {
+      state.modal.component = setup.component;
+      state.modal.componentProps = setup.componentProps;
+      state.modal.opened = true;
+    },
+
+    CLOSE_MODAL(state: RootState) {
+      state.modal.opened = false;
     },
   },
   actions: {
@@ -34,6 +51,16 @@ export const store = createStore<RootState>({
       const response = await ApiService.getLists();
 
       commit("SET_LISTS", response);
+    },
+
+    async addList({ commit }, name: string) {
+      const response = await ApiService.addList({
+        id: "",
+        title: name,
+        items: [],
+      });
+
+      commit("ADD_LIST", response);
     },
   },
   modules: {

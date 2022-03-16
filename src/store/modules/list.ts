@@ -1,6 +1,11 @@
 import ApiService from "@/api/ApiService";
-import type { RootState, ListDetailApi } from "@/types";
+import type { RootState, ListDetailApi, ItemApi } from "@/types";
 import type { Module } from "vuex";
+
+interface ItemActive {
+  item: ItemApi;
+  active: ItemApi["active"];
+}
 
 const listModule: Module<ListDetailApi, RootState> = {
   namespaced: true,
@@ -15,7 +20,14 @@ const listModule: Module<ListDetailApi, RootState> = {
       state.id = payload.id;
       state.title = payload.title;
       state.items = payload.items;
-      console.log(state.items);
+    },
+    SET_ITEM_STATUS(state: ListDetailApi, payload: ItemActive) {
+      payload.item.active = payload.active;
+    },
+    SET_ITEM(state: ListDetailApi, payload: ItemApi) {
+      state.items.forEach((item, i) =>
+        item.id === payload.id ? (state.items[i] = payload) : null
+      );
     },
   },
   actions: {
@@ -23,6 +35,18 @@ const listModule: Module<ListDetailApi, RootState> = {
       const response = await ApiService.getListDetail(id);
 
       commit("SET_ALL", response);
+    },
+
+    async updateItemStatus({ commit, dispatch }, payload: ItemActive) {
+      commit("SET_ITEM_STATUS", payload);
+
+      dispatch("updateItem", payload.item);
+    },
+
+    async updateItem({ commit }, payload: ItemApi) {
+      const response = await ApiService.editListItem(payload);
+
+      commit("SET_ITEM", response);
     },
   },
 };

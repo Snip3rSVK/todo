@@ -1,6 +1,6 @@
 <template>
   <v-list density="compact">
-    <v-list-item color="primary" link>
+    <v-list-item color="primary">
       <v-list-item-avatar left>
         <v-icon color="primary" icon="mdi-plus-circle-outline"></v-icon>
       </v-list-item-avatar>
@@ -21,12 +21,9 @@
 
   <div class="list-items-wrapper">
     <list-item
-      v-for="{ id, active, title, description, date } in store.state.list.items"
-      :key="id"
-      :active="active"
-      :title="title"
-      :description="description"
-      :date="date"
+      v-for="item in store.state.list.items"
+      :key="item.id"
+      :item="item"
     ></list-item>
   </div>
 </template>
@@ -35,12 +32,12 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "ListView",
+  name: "TodoListView",
 });
 </script>
 
 <script setup lang="ts">
-import ListItem from "@/components/ListItem.vue";
+import ListItem from "@/components/TodoListItem.vue";
 import { watch } from "vue";
 import { useStore } from "@/store";
 import { useRoute } from "vue-router";

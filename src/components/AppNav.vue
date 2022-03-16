@@ -1,5 +1,4 @@
 <template>
-  <!-- temporary -->
   <v-navigation-drawer v-model="navOpened">
     <v-list density="compact" class="border-b list-header">
       <v-list-item title="Todo App" class="pr-2">
@@ -27,7 +26,7 @@
         <v-list-item-title>{{ title }}</v-list-item-title>
       </v-list-item>
 
-      <v-list-item color="primary" link>
+      <v-list-item color="primary" @click="addList()">
         <v-list-item-avatar left>
           <v-icon color="primary" icon="mdi-plus"></v-icon>
         </v-list-item-avatar>
@@ -40,6 +39,7 @@
 <script setup lang="ts">
 import { useStore } from "@/store";
 import { computed } from "vue";
+import AddEditList from "./AddEditList.vue";
 
 const store = useStore();
 
@@ -47,4 +47,10 @@ const navOpened = computed({
   get: () => store.state.navOpened,
   set: (value: boolean) => store.commit("SET_NAV", value),
 });
+
+function addList() {
+  store.commit("OPEN_MODAL", {
+    component: AddEditList,
+  });
+}
 </script>

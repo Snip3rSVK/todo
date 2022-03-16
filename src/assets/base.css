@@ -1,11 +1,32 @@
 .v-app-bar {
-    transition-property: height, tranform, margin;
+  transition-property: height, tranform, margin;
 }
 
 .v-app-bar-title {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .v-input--density-comfortable {
-    --v-input-control-height: 36px
+  --v-input-control-height: 36px;
+}
+
+.v-input__details {
+  margin-bottom: 0;
+}
+
+.v-field { 
+  --v-field-padding-start: 12px;
+  --v-field-padding-end: 12px;
+}
+
+/* Fix buggy dialog */
+.v-dialog .v-overlay__content {
+  max-height: unset;
+  max-width: 600px;
+  width: 100%;
+  padding: 16px;
+}
+
+html {
+  overflow-y: auto
 }
