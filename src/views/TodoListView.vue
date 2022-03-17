@@ -8,17 +8,6 @@
     </v-list-item>
   </v-list>
 
-  <!-- <v-menu transition="slide-y-transition" v-model="showMenu" bottom>
-    <template v-slot:activator="{ props }">
-      <v-btn color="primary" dark v-bind="props">Dropdown</v-btn>
-    </template>
-    <v-list>
-      <v-list-item @click="showMenu = !showMenu">
-        <v-list-item-title>hello</v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu> -->
-
   <div class="list-items-wrapper">
     <list-item
       v-for="item in store.state.list.items"
@@ -58,6 +47,11 @@ store.dispatch("list/getListDetail", route.params.id);
 function addItem() {
   store.commit("OPEN_MODAL", {
     component: AddEditListItem,
+    componentProps: {
+      item: {
+        listId: store.state.list.id,
+      },
+    },
   });
 }
 </script>

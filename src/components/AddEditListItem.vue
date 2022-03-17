@@ -52,7 +52,7 @@ const store = useStore();
 const formRef = ref(null);
 const valid = ref(false);
 
-const form = toRefs(props.item || {});
+const form = toRefs(props.item || ({} as ItemApi));
 
 const rules = reactive({
   required: (value: string) => Boolean(value) || "Required",
