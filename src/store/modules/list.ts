@@ -21,12 +21,15 @@ const listModule: Module<ListDetailApi, RootState> = {
       state.title = payload.title;
       state.items = payload.items;
     },
+    ADD_ITEM(state: ListDetailApi, item: ItemApi) {
+      state.items.push(item);
+    },
     SET_ITEM_STATUS(state: ListDetailApi, payload: ItemActive) {
       payload.item.active = payload.active;
     },
-    SET_ITEM(state: ListDetailApi, payload: ItemApi) {
-      state.items.forEach((item, i) =>
-        item.id === payload.id ? (state.items[i] = payload) : null
+    SET_ITEM(state: ListDetailApi, item: ItemApi) {
+      state.items.forEach((elem, i) =>
+        elem.id === item.id ? (state.items[i] = item) : null
       );
     },
   },
@@ -43,10 +46,16 @@ const listModule: Module<ListDetailApi, RootState> = {
       dispatch("updateItem", payload.item);
     },
 
-    async updateItem({ commit }, payload: ItemApi) {
-      const response = await ApiService.editListItem(payload);
+    async updateItem({ commit }, item: ItemApi) {
+      const response = await ApiService.editListItem(item);
 
       commit("SET_ITEM", response);
+    },
+
+    async addItem({ commit }, item: ItemApi) {
+      const response = await ApiService.addListItem(item);
+
+      commit("ADD_ITEM", response);
     },
   },
 };

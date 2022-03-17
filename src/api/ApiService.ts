@@ -19,6 +19,11 @@ export default {
     return (await axios.post<ListDetailApi>("lists/", list)).data;
   },
 
+  async addListItem(item: ItemApi) {
+    return (await axios.put<ItemApi>(`/lists/${item.listId}/items/`, item))
+      .data;
+  },
+
   async editListItem(item: ItemApi) {
     return (
       await axios.put<ItemApi>(`/lists/${item.listId}/items/${item.id}`, item)

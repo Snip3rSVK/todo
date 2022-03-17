@@ -26,9 +26,13 @@
         <v-list-item-title>{{ title }}</v-list-item-title>
       </v-list-item>
 
-      <v-list-item color="primary" @click="addList()">
+      <v-list-item
+        active-class="hide-active"
+        color="primary"
+        @click="addList()"
+      >
         <v-list-item-avatar left>
-          <v-icon color="primary" icon="mdi-plus"></v-icon>
+          <v-icon icon="mdi-plus"></v-icon>
         </v-list-item-avatar>
         <v-list-item-title>Add new list</v-list-item-title>
       </v-list-item>

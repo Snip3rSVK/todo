@@ -1,8 +1,8 @@
 <template>
   <v-list density="compact">
-    <v-list-item color="primary">
+    <v-list-item active-class="hide-active" color="primary" @click="addItem()">
       <v-list-item-avatar left>
-        <v-icon color="primary" icon="mdi-plus-circle-outline"></v-icon>
+        <v-icon icon="mdi-plus-circle-outline"></v-icon>
       </v-list-item-avatar>
       <v-list-item-title>Add new item</v-list-item-title>
     </v-list-item>
@@ -41,6 +41,7 @@ import ListItem from "@/components/TodoListItem.vue";
 import { watch } from "vue";
 import { useStore } from "@/store";
 import { useRoute } from "vue-router";
+import AddEditListItem from "@/components/AddEditListItem.vue";
 
 const store = useStore();
 const route = useRoute();
@@ -53,4 +54,10 @@ watch(
 );
 
 store.dispatch("list/getListDetail", route.params.id);
+
+function addItem() {
+  store.commit("OPEN_MODAL", {
+    component: AddEditListItem,
+  });
+}
 </script>

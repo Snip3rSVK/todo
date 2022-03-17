@@ -1,6 +1,6 @@
 import ApiService from "@/api/ApiService";
 import type { RootState, ListApi, ModalSetup, ListDetailApi } from "@/types";
-import type { InjectionKey } from "vue";
+import { shallowRef, type InjectionKey } from "vue";
 import { createStore, useStore as baseUseStore, Store } from "vuex";
 import listModule from "./modules/list";
 
@@ -19,7 +19,6 @@ export const store = createStore<RootState>({
   mutations: {
     // TODO constants
     SET_LISTS(state: RootState, lists: ListApi[]) {
-      // TODO is this reactive?
       state.lists = lists;
     },
 
@@ -36,13 +35,17 @@ export const store = createStore<RootState>({
     },
 
     OPEN_MODAL(state: RootState, setup: ModalSetup) {
-      state.modal.component = setup.component;
+      state.modal.component = shallowRef(setup.component);
       state.modal.componentProps = setup.componentProps;
       state.modal.opened = true;
     },
 
     CLOSE_MODAL(state: RootState) {
       state.modal.opened = false;
+    },
+
+    SET_MODAL(state: RootState, value: boolean) {
+      state.modal.opened = value;
     },
   },
   actions: {

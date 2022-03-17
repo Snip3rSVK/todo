@@ -51,6 +51,7 @@
 <script setup lang="ts">
 import { useStore } from "@/store";
 import type { ItemApi } from "@/types";
+import { formatDate } from "@/utils/Date";
 import { computed } from "vue";
 
 // The ItemApi interface could be used instead, but it doesnt work in definedProps in the current vue version
@@ -63,21 +64,14 @@ const store = useStore();
 
 const active = computed({
   get: () => props.item.active,
-  set: (active: boolean) =>
-    store.dispatch("list/updateItemStatus", { item: props.item, active }),
+  set: (active: boolean) => {
+    return store.dispatch("list/updateItemStatus", {
+      item: props.item,
+      active,
+    });
+  },
 });
-const formattedDate = computed(() => {
-  const date = new Date(props.item.date || "");
-
-  // TODO maybe put this in util
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-  });
-});
+const formattedDate = computed(() => formatDate(props.item.date));
 </script>
 
 <style scoped>

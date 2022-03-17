@@ -1,6 +1,8 @@
-import type { DefineComponent } from "vue";
+import type { DefineComponent, ShallowRef } from "vue";
 
-interface Modal extends ModalSetup {
+interface Modal {
+  component: ShallowRef<ModalSetup["component"]> | null;
+  componentProps: ModalSetup["componentProps"];
   opened: boolean;
 }
 
@@ -26,7 +28,7 @@ export interface ItemApi {
   active: boolean;
   title: string;
   description?: string;
-  date?: Date;
+  date?: string;
 }
 
 export interface ListDetailApi extends ListApi {
