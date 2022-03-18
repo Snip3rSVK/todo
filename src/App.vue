@@ -20,13 +20,9 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { useStore } from "@/store";
 import AppBar from "@/components/AppBar.vue";
 import AppNav from "@/components/AppNav.vue";
 import AppModal from "@/components/AppModal.vue";
-
-const store = useStore();
-store.dispatch("getLists");
 </script>
 
 <style>

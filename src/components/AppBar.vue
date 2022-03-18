@@ -1,7 +1,7 @@
 <template>
   <v-app-bar
     density="comfortable"
-    class="border-b bar"
+    class="border-b bar pr-1"
     style="height: unset"
     flat
   >
@@ -12,9 +12,9 @@
       ></v-app-bar-nav-icon>
     </template>
 
-    <v-app-bar-title v-if="!searchMode" class="pl-2"
-      >Skuska {{ store.state.list.title }}</v-app-bar-title
-    >
+    <v-app-bar-title v-if="!searchMode" class="pl-2">
+      {{ store.state.list.title }}
+    </v-app-bar-title>
 
     <!-- Search -->
     <v-text-field

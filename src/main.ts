@@ -8,4 +8,9 @@ import "@/assets/base.css";
 
 loadFonts();
 
-createApp(App).use(router).use(vuetify).use(store, key).mount("#app");
+const app = createApp(App);
+
+app.directive("visible", function (el, binding) {
+  el.style.visibility = binding.value ? "visible" : "hidden";
+});
+app.use(router).use(vuetify).use(store, key).mount("#app");

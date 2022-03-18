@@ -1,7 +1,13 @@
 <template>
   <v-form v-model="valid" ref="formRef">
     <v-card class="card overflow-y-auto">
-      <v-card-header class="pt-4 pr-5 pb-0 pl-5">
+      <v-progress-linear
+        v-visible="loading"
+        height="2"
+        indeterminate
+      ></v-progress-linear>
+
+      <v-card-header class="pt-3 pr-5 pb-0 pl-5">
         <v-card-header-text>
           <v-card-title>Add new list</v-card-title>
         </v-card-header-text>
@@ -17,7 +23,7 @@
       <v-card-actions class="pt-0">
         <v-spacer></v-spacer>
         <v-btn @click="close()" variant="text">Cancel</v-btn>
-        <v-btn @click="submit()" variant="text">Add</v-btn>
+        <v-btn @click="submit()" :disabled="loading" variant="text">Add</v-btn>
       </v-card-actions>
     </v-card>
   </v-form>
@@ -40,6 +46,8 @@ const valid = ref(false);
 
 const title = ref(props.title);
 
+const loading = ref(false);
+
 const rules = reactive({
   required: (value: string) => Boolean(value) || "Required",
 });
@@ -48,7 +56,9 @@ async function submit() {
   await formRef.value.validate();
 
   if (valid.value) {
+    loading.value = true;
     await store.dispatch("addList", title.value);
+    loading.value = false;
     close();
   }
 }

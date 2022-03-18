@@ -28,7 +28,7 @@ export interface ItemApi {
   active: boolean;
   title: string;
   description?: string;
-  date?: string;
+  date?: string | null;
 }
 
 export interface ListDetailApi extends ListApi {

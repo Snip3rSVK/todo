@@ -14,6 +14,12 @@
       </v-list-item>
     </v-list>
 
+    <v-progress-linear
+      v-visible="loading"
+      height="1"
+      class="progress-bar-thin"
+      indeterminate
+    ></v-progress-linear>
     <v-list density="compact" nav>
       <v-list-item
         :key="id"
@@ -42,10 +48,11 @@
 
 <script setup lang="ts">
 import { useStore } from "@/store";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import AddEditList from "./AddEditList.vue";
 
 const store = useStore();
+const loading = ref(true);
 
 const navOpened = computed({
   get: () => store.state.navOpened,
@@ -57,4 +64,6 @@ function addList() {
     component: AddEditList,
   });
 }
+
+store.dispatch("getLists").then(() => (loading.value = false));
 </script>

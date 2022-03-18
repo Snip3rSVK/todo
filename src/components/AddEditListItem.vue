@@ -1,7 +1,13 @@
 <template>
   <v-form v-model="valid" ref="formRef">
     <v-card class="card overflow-y-auto">
-      <v-card-header class="pt-4 pr-5 pb-0 pl-5">
+      <v-progress-linear
+        v-visible="loading"
+        height="2"
+        indeterminate
+      ></v-progress-linear>
+
+      <v-card-header class="pt-3 pr-5 pb-0 pl-5">
         <v-card-header-text>
           <v-card-title>Add new item</v-card-title>
         </v-card-header-text>
@@ -30,7 +36,7 @@
       <v-card-actions class="pt-0">
         <v-spacer></v-spacer>
         <v-btn @click="close()" variant="text">Cancel</v-btn>
-        <v-btn @click="submit()" variant="text">Add</v-btn>
+        <v-btn @click="submit()" :disabled="loading" variant="text">Add</v-btn>
       </v-card-actions>
     </v-card>
   </v-form>
@@ -38,6 +44,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, toRefs } from "vue";
+import { deepUnref } from "vue-deepunref";
 import { useStore } from "@/store";
 import { isDate } from "@/utils/Date";
 import type { ItemApi } from "@/types";
@@ -53,6 +60,7 @@ const formRef = ref(null);
 const valid = ref(false);
 
 const form = toRefs(props.item || ({} as ItemApi));
+const loading = ref(false);
 
 const rules = reactive({
   required: (value: string) => Boolean(value) || "Required",
@@ -63,12 +71,11 @@ async function submit() {
   await formRef.value.validate();
 
   if (valid.value) {
-    await store.dispatch("list/addItem", form);
+    loading.value = true;
+    await store.dispatch("list/addItem", deepUnref(form));
+    loading.value = false;
     close();
   }
-  console.log(form);
-  // await store.dispatch("addList", title.value);
-  // close();
 }
 
 function close() {

@@ -1,6 +1,13 @@
 <template>
+  <v-progress-linear
+    v-visible="loading"
+    height="1"
+    class="progress-bar-thin"
+    indeterminate
+  ></v-progress-linear>
+
   <v-list density="compact">
-    <v-list-item active-class="hide-active" color="primary" @click="addItem()">
+    <v-list-item @click="addItem()" active-class="hide-active" color="primary">
       <v-list-item-avatar left>
         <v-icon icon="mdi-plus-circle-outline"></v-icon>
       </v-list-item-avatar>
@@ -10,7 +17,7 @@
 
   <div class="list-items-wrapper">
     <list-item
-      v-for="item in store.state.list.items"
+      v-for="item in reversedItems"
       :key="item.id"
       :item="item"
     ></list-item>
@@ -18,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 
 export default defineComponent({
   name: "TodoListView",
@@ -27,29 +34,35 @@ export default defineComponent({
 
 <script setup lang="ts">
 import ListItem from "@/components/TodoListItem.vue";
-import { watch } from "vue";
+import { watch, ref } from "vue";
 import { useStore } from "@/store";
 import { useRoute } from "vue-router";
 import AddEditListItem from "@/components/AddEditListItem.vue";
+import type { ItemApi } from "@/types";
 
-const store = useStore();
 const route = useRoute();
+const store = useStore();
+const loading = ref(false);
 
-watch(
-  () => route.params.id,
-  async (newId) => {
-    store.dispatch("list/getListDetail", newId);
-  }
+const reversedItems = computed<ItemApi[]>(() =>
+  store.state.list.items.slice().reverse()
 );
 
-store.dispatch("list/getListDetail", route.params.id);
+watch(() => route.params.id, fetchListDetail);
+onMounted(fetchListDetail);
+
+async function fetchListDetail() {
+  loading.value = true;
+  await store.dispatch("list/getListDetail", route.params.id);
+  loading.value = false;
+}
 
 function addItem() {
   store.commit("OPEN_MODAL", {
     component: AddEditListItem,
     componentProps: {
       item: {
-        listId: store.state.list.id,
+        listId: store.state.list.id || route.params.id,
       },
     },
   });

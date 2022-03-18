@@ -53,7 +53,15 @@ const listModule: Module<ListDetailApi, RootState> = {
     },
 
     async addItem({ commit }, item: ItemApi) {
-      const response = await ApiService.addListItem(item);
+      // All properties must have values so that api doesn't generate random data on them
+      const response = await ApiService.addListItem({
+        id: item.id || "",
+        listId: item.listId || "",
+        active: item.active || false,
+        title: item.title || "",
+        description: item.description || "",
+        date: item.date || null,
+      });
 
       commit("ADD_ITEM", response);
     },

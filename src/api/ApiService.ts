@@ -20,7 +20,7 @@ export default {
   },
 
   async addListItem(item: ItemApi) {
-    return (await axios.put<ItemApi>(`/lists/${item.listId}/items/`, item))
+    return (await axios.post<ItemApi>(`/lists/${item.listId}/items/`, item))
       .data;
   },
 
