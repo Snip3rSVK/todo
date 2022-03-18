@@ -7,19 +7,29 @@ interface ItemActive {
   active: ItemApi["active"];
 }
 
-const listModule: Module<ListDetailApi, RootState> = {
-  namespaced: true,
-  state: () => ({
+const getDefaultState = () => {
+  return {
     id: "",
     title: "",
     items: [],
-  }),
+  };
+};
+
+const listModule: Module<ListDetailApi, RootState> = {
+  namespaced: true,
+  state: getDefaultState(),
   getters: {},
   mutations: {
     SET_ALL(state: ListDetailApi, payload: ListDetailApi) {
       state.id = payload.id;
       state.title = payload.title;
       state.items = payload.items;
+    },
+    CLEAR_ALL(state: ListDetailApi) {
+      Object.assign(state, getDefaultState());
+    },
+    SET_TITLE(state: ListDetailApi, title: string) {
+      state.title = title;
     },
     ADD_ITEM(state: ListDetailApi, item: ItemApi) {
       state.items.push(item);
@@ -32,6 +42,9 @@ const listModule: Module<ListDetailApi, RootState> = {
         elem.id === item.id ? (state.items[i] = item) : null
       );
     },
+    REMOVE_ITEM(state: ListDetailApi, id: string) {
+      state.items = state.items.filter((item) => item.id !== id);
+    },
   },
   actions: {
     async getListDetail({ commit }, id: string) {
@@ -43,13 +56,7 @@ const listModule: Module<ListDetailApi, RootState> = {
     async updateItemStatus({ commit, dispatch }, payload: ItemActive) {
       commit("SET_ITEM_STATUS", payload);
 
-      dispatch("updateItem", payload.item);
-    },
-
-    async updateItem({ commit }, item: ItemApi) {
-      const response = await ApiService.editListItem(item);
-
-      commit("SET_ITEM", response);
+      dispatch("editItem", payload.item);
     },
 
     async addItem({ commit }, item: ItemApi) {
@@ -64,6 +71,18 @@ const listModule: Module<ListDetailApi, RootState> = {
       });
 
       commit("ADD_ITEM", response);
+    },
+
+    async editItem({ commit }, item: ItemApi) {
+      const response = await ApiService.editListItem(item);
+
+      commit("SET_ITEM", response);
+    },
+
+    async removeItem({ commit }, item: ItemApi) {
+      await ApiService.removeListItem(item);
+
+      commit("REMOVE_ITEM", item.id);
     },
   },
 };

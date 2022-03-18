@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="opened" style="z-index: 1010">
+  <v-dialog v-model="opened" style="z-index: 2010">
     <component
       :is="store.state.modal.component"
       v-bind="store.state.modal.componentProps"

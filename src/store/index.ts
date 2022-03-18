@@ -16,6 +16,23 @@ export const store = createStore<RootState>({
       componentProps: null,
     },
   },
+  getters: {
+    getNextListId: (state: RootState) => (currId: string) => {
+      let nextId = "";
+
+      state.lists.forEach((list, i) => {
+        if (list.id === currId) {
+          nextId = state.lists[(i + 1) % state.lists.length].id;
+        }
+      });
+
+      if (!nextId || currId === nextId) {
+        return null;
+      } else {
+        return nextId;
+      }
+    },
+  },
   mutations: {
     // TODO constants
     SET_LISTS(state: RootState, lists: ListApi[]) {
@@ -24,6 +41,16 @@ export const store = createStore<RootState>({
 
     ADD_LIST(state: RootState, list: ListDetailApi) {
       state.lists.push(list);
+    },
+
+    SET_LIST(state: RootState, list: ListApi) {
+      state.lists.forEach((elem, i) =>
+        elem.id === list.id ? (state.lists[i] = list) : null
+      );
+    },
+
+    REMOVE_LIST(state: RootState, id: string) {
+      state.lists = state.lists.filter((list) => list.id !== id);
     },
 
     TOGGLE_NAV(state: RootState) {
@@ -64,6 +91,20 @@ export const store = createStore<RootState>({
       });
 
       commit("ADD_LIST", response);
+    },
+
+    async editList({ commit }, payload: ListApi) {
+      const response = await ApiService.editList(payload);
+
+      commit("SET_LIST", response);
+      commit("list/SET_TITLE", response.title);
+    },
+
+    async removeList({ commit }, list: ListDetailApi) {
+      await ApiService.removeList(list);
+
+      commit("REMOVE_LIST", list.id);
+      commit("list/CLEAR_ALL");
     },
   },
   modules: {

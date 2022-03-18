@@ -38,12 +38,30 @@
     </div>
 
     <div class="list-item-options">
-      <v-btn
-        density="comfortable"
-        variant="text"
-        icon="mdi-dots-vertical"
-        flat
-      ></v-btn>
+      <!-- Other -->
+      <v-menu
+        v-model="showOther"
+        :close-on-content-click="false"
+        transition="slide-y-transition"
+        anchor="bottom end"
+      >
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            density="comfortable"
+            variant="text"
+            icon="mdi-dots-vertical"
+          ></v-btn>
+        </template>
+        <v-list class="popup elevation-1">
+          <v-list-item @click="editItem()">
+            <v-list-item-title>Edit</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="removeItem()">
+            <v-list-item-title>Remove</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </div>
   </div>
 </template>
@@ -52,7 +70,8 @@
 import { useStore } from "@/store";
 import type { ItemApi } from "@/types";
 import { formatDate } from "@/utils/Date";
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import AddEditListItem from "./AddEditListItem.vue";
 
 // The ItemApi interface could be used instead, but it doesnt work in definedProps in the current vue version
 interface Props {
@@ -61,6 +80,8 @@ interface Props {
 
 const props = defineProps<Props>();
 const store = useStore();
+
+const showOther = ref(false);
 
 const active = computed({
   get: () => props.item.active,
@@ -72,6 +93,27 @@ const active = computed({
   },
 });
 const formattedDate = computed(() => formatDate(props.item.date));
+
+function closePopup() {
+  showOther.value = false;
+}
+
+function editItem() {
+  closePopup();
+
+  store.commit("OPEN_MODAL", {
+    component: AddEditListItem,
+    componentProps: {
+      item: props.item,
+    },
+  });
+}
+
+async function removeItem() {
+  closePopup();
+
+  await store.dispatch("list/removeItem", props.item);
+}
 </script>
 
 <style scoped>

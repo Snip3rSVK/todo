@@ -19,6 +19,15 @@ export default {
     return (await axios.post<ListDetailApi>("lists/", list)).data;
   },
 
+  async editList(list: ListApi) {
+    return (await axios.put<ListApi>(`lists/${list.id}`, list)).data;
+  },
+
+  async removeList(list: ListDetailApi) {
+    list.items.forEach((item) => this.removeListItem(item));
+    return (await axios.delete<ListApi>(`lists/${list.id}`)).data;
+  },
+
   async addListItem(item: ItemApi) {
     return (await axios.post<ItemApi>(`/lists/${item.listId}/items/`, item))
       .data;
@@ -28,5 +37,9 @@ export default {
     return (
       await axios.put<ItemApi>(`/lists/${item.listId}/items/${item.id}`, item)
     ).data;
+  },
+
+  async removeListItem({ listId, id }: ItemApi) {
+    return (await axios.delete(`lists/${listId}/items/${id}`)).data;
   },
 };

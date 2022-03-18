@@ -22,6 +22,7 @@
       autofocus
       hide-details
       single-line
+      persistent-placeholder
       type="search"
       placeholder="Search items"
       variant="plain"
@@ -87,11 +88,14 @@
         ></v-btn>
       </template>
       <v-list class="popup elevation-1">
-        <v-list-item @click="closeOther()">
-          <v-list-item-title class="text-right">Edit list</v-list-item-title>
+        <v-list-item @click="editList()">
+          <v-list-item-title>Edit list</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="closeOther()">
-          <v-list-item-title class="text-right">Remove list</v-list-item-title>
+        <v-list-item
+          @click="removeList()"
+          :disabled="store.state.list.id === '1'"
+        >
+          <v-list-item-title>Remove list</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -101,7 +105,11 @@
 <script setup lang="ts">
 import { useStore } from "@/store";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { deepUnref } from "vue-deepunref";
+import AddEditList from "./AddEditList.vue";
 
+const router = useRouter();
 const store = useStore();
 
 const searchMode = ref(false);
@@ -124,6 +132,30 @@ function openSearch() {
 
 function closeSearch() {
   searchMode.value = false;
+}
+
+function editList() {
+  closeOther();
+
+  store.commit("OPEN_MODAL", {
+    component: AddEditList,
+    componentProps: {
+      id: store.state.list.id,
+      title: store.state.list.title,
+    },
+  });
+}
+
+async function removeList() {
+  closeOther();
+
+  const id: string = store.state.list.id;
+  const nextId: string = store.getters.getNextListId(id) || "1";
+
+  await store.dispatch("removeList", deepUnref(store.state.list));
+
+  // Forward to next list
+  router.push({ name: "lists", params: { id: nextId } });
 }
 </script>
 
