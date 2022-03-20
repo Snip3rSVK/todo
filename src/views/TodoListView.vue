@@ -49,12 +49,15 @@ const reversedFilteredItems = computed<ItemApi[]>(() =>
   store.getters["list/getFilteredItems"].slice().reverse()
 );
 
-watch(() => route.params.id, fetchListDetail);
-onMounted(fetchListDetail);
+watch(() => route.params.id, onStart);
+onMounted(onStart);
 
-async function fetchListDetail() {
+async function onStart() {
   loading.value = true;
+
   await store.dispatch("list/getListDetail", route.params.id);
+  store.commit("list/CLEAR_FILTER");
+
   loading.value = false;
 }
 

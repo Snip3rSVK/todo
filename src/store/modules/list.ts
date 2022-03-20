@@ -74,6 +74,10 @@ const listModule: Module<ListStore, RootState> = {
     FILTER_ALL(state: ListStore) {
       state.filter.completed = null;
     },
+    CLEAR_FILTER(state: ListStore) {
+      state.filter.completed = null;
+      state.filter.searchText = "";
+    },
     ADD_ITEM(state: ListStore, item: ItemApi) {
       state.items.push(item);
     },
