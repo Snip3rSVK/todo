@@ -19,6 +19,7 @@
     <!-- Search -->
     <v-text-field
       v-if="searchMode"
+      v-model="searchText"
       autofocus
       hide-details
       single-line
@@ -39,7 +40,7 @@
 
     <!-- Open search -->
     <v-btn
-      v-if="!searchMode"
+      v-else
       @click="openSearch()"
       variant="text"
       icon="mdi-magnify"
@@ -60,13 +61,13 @@
         ></v-btn>
       </template>
       <v-list class="popup elevation-1">
-        <v-list-item @click="closeFilter()">
-          <v-list-item-title>Not Completed</v-list-item-title>
+        <v-list-item @click="showActiveItems()">
+          <v-list-item-title>Not completed</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="closeFilter()">
+        <v-list-item @click="showCompletedItems()">
           <v-list-item-title>Completed</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="closeFilter()">
+        <v-list-item @click="showAllItems()">
           <v-list-item-title>All items</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -93,18 +94,25 @@
         </v-list-item>
         <v-list-item
           @click="removeList()"
-          :disabled="store.state.list.id === '1'"
+          :disabled="store.state.list.id === '1' || loading"
         >
-          <v-list-item-title>Remove list</v-list-item-title>
+          <v-list-item-title v-if="!loading">Remove list</v-list-item-title>
+          <v-list-item-title v-else>Removing...</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
+    <v-progress-linear
+      v-visible="loading"
+      height="1"
+      indeterminate
+      class="progress-bar"
+    ></v-progress-linear>
   </v-app-bar>
 </template>
 
 <script setup lang="ts">
 import { useStore } from "@/store";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { deepUnref } from "vue-deepunref";
 import AddEditList from "./AddEditList.vue";
@@ -113,9 +121,32 @@ const router = useRouter();
 const store = useStore();
 
 const searchMode = ref(false);
+const loading = ref(false);
 
 const showFilter = ref(false);
 const showOther = ref(false);
+
+const searchText = computed({
+  get: () => store.state.list.filter.searchText,
+  set: (text: string) => {
+    return store.commit("list/FILTER_SEARCH_TEXT", text);
+  },
+});
+
+function showActiveItems() {
+  closeFilter();
+  store.commit("list/FILTER_ACTIVE");
+}
+
+function showCompletedItems() {
+  closeFilter();
+  store.commit("list/FILTER_COMPLETED");
+}
+
+function showAllItems() {
+  closeFilter();
+  store.commit("list/FILTER_ALL");
+}
 
 // This is fix for not closing popup after selecting item (Vuetify is in beta)
 function closeFilter() {
@@ -132,6 +163,7 @@ function openSearch() {
 
 function closeSearch() {
   searchMode.value = false;
+  store.commit("list/FILTER_SEARCH_TEXT", "");
 }
 
 function editList() {
@@ -152,7 +184,9 @@ async function removeList() {
   const id: string = store.state.list.id;
   const nextId: string = store.getters.getNextListId(id) || "1";
 
+  loading.value = true;
   await store.dispatch("removeList", deepUnref(store.state.list));
+  loading.value = false;
 
   // Forward to next list
   router.push({ name: "lists", params: { id: nextId } });
@@ -160,6 +194,10 @@ async function removeList() {
 </script>
 
 <style>
+.bar {
+  overflow: visible !important;
+}
+
 .bar .v-field__field {
   --v-field-padding-start: 4px;
   padding-top: 1px;
@@ -169,5 +207,12 @@ async function removeList() {
 
 .popup {
   margin-top: 5px;
+}
+
+.progress-bar {
+  bottom: -1px;
+  left: 0;
+  position: fixed;
+  z-index: 10020 !important;
 }
 </style>

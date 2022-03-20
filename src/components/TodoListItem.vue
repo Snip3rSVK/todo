@@ -4,7 +4,7 @@
 
     <div class="list-item-checkbox pr-2">
       <v-checkbox
-        v-model="active"
+        v-model="completed"
         color="primary"
         false-icon="mdi-checkbox-blank-circle-outline"
         true-icon="mdi-check"
@@ -17,7 +17,7 @@
     <div class="flex-grow-1 pt-1 text-truncate">
       <div
         class="list-item-title text-truncate"
-        :class="{ 'text-decoration-line-through': props.item.active }"
+        :class="{ 'text-decoration-line-through': props.item.completed }"
       >
         {{ props.item.title }}
       </div>
@@ -83,12 +83,12 @@ const store = useStore();
 
 const showOther = ref(false);
 
-const active = computed({
-  get: () => props.item.active,
-  set: (active: boolean) => {
+const completed = computed({
+  get: () => props.item.completed,
+  set: (completed: boolean) => {
     return store.dispatch("list/updateItemStatus", {
       item: props.item,
-      active,
+      completed,
     });
   },
 });

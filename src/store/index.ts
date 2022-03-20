@@ -34,7 +34,6 @@ export const store = createStore<RootState>({
     },
   },
   mutations: {
-    // TODO constants
     SET_LISTS(state: RootState, lists: ListApi[]) {
       state.lists = lists;
     },
@@ -76,7 +75,6 @@ export const store = createStore<RootState>({
     },
   },
   actions: {
-    // TODO constants
     async getLists({ commit }) {
       const response = await ApiService.getLists();
 
@@ -110,8 +108,6 @@ export const store = createStore<RootState>({
   modules: {
     list: listModule,
   },
-  // TODO remove in production
-  strict: true,
 });
 
 export function useStore() {

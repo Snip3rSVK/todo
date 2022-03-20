@@ -24,7 +24,10 @@ export default {
   },
 
   async removeList(list: ListDetailApi) {
-    list.items.forEach((item) => this.removeListItem(item));
+    for (const item of list.items) {
+      await this.removeListItem(item);
+    }
+
     return (await axios.delete<ListApi>(`lists/${list.id}`)).data;
   },
 

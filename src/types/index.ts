@@ -25,7 +25,7 @@ export interface ListApi {
 export interface ItemApi {
   id: string;
   listId: string;
-  active: boolean;
+  completed: boolean;
   title: string;
   description?: string;
   date?: string | null;

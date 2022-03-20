@@ -17,7 +17,7 @@
 
   <div class="list-items-wrapper">
     <list-item
-      v-for="item in reversedItems"
+      v-for="item in reversedFilteredItems"
       :key="item.id"
       :item="item"
     ></list-item>
@@ -44,8 +44,9 @@ const route = useRoute();
 const store = useStore();
 const loading = ref(false);
 
-const reversedItems = computed<ItemApi[]>(() =>
-  store.state.list.items.slice().reverse()
+// getFilteredItems
+const reversedFilteredItems = computed<ItemApi[]>(() =>
+  store.getters["list/getFilteredItems"].slice().reverse()
 );
 
 watch(() => route.params.id, fetchListDetail);
