@@ -41,7 +41,9 @@ const listModule: Module<ListStore, RootState> = {
 
       if (state.filter.searchText) {
         result = result.filter((item) =>
-          item.title.includes(state.filter.searchText)
+          item.title
+            .toLowerCase()
+            .includes(state.filter.searchText.toLowerCase())
         );
       }
 
